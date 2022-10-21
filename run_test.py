@@ -7,8 +7,8 @@ import shutil
 TypE = 'adult'
 # TypE = 'violence'
 
-model = load_model(f'final_{TypE}.h5')
-test_data_dir = './imgs_{TypE}'
+model = load_model(f'modelS/{TypE}.h5')
+test_data_dir = f'./imgs_{TypE}'
 batch_size = 1
 nb_samples = 1
 SIZE = (224, 224)
@@ -22,7 +22,15 @@ test_generator = test_datagen.flow_from_directory(test_data_dir         ,
                                                   shuffle     = False      ,
                                                  )
 
-result = model.predict_generator(test_generator, nb_samples // batch_size)
+correct_normal = 0
+correct_bad    = 0
 
-print('result是', result)
+result = model.predict_generator(test_generator, nb_samples // batch_size)
+prob = result[0][0]
+print(f'是不良图片的概率',   round(prob , 3)  )
+if  prob > 0.9:
+    print(f'This img may be bad, ')
+else:
+    print(f'This img may be OK, { round(100 * result[0][0] , 1) }% sure')
+
 
